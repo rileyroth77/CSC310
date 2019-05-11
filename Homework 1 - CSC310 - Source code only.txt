@@ -1,0 +1,166 @@
+class problem1:
+    """
+    Write/Test a short Python program that repeatedly reads lines from standard
+    input until an EOFError is raised, and then outputs those lines in reverse order
+    (a user can indicate end of input by typing ctrl-D or ctrl-Z).
+
+    This program uses an infinite while loop to read input from the user. Each input is
+    placed at the beginning of the list read_list. This continues until the user enters
+
+    """
+    def read():
+        read_list = []
+        try:
+            while (True):
+                line = input("Enter a string. \n")
+                read_list = [line] + read_list
+        except EOFError:
+            for x in read_list:
+                print(x)
+
+
+class problem2:
+    @staticmethod
+    def odd_product(numbers):
+        """
+        Write/Test a short Python function that takes a sequence of integer values
+        and determines if there is a distinct pair of numbers in the sequence whose
+        product is odd. (e.g., your_program([1, 2, 2, 3]) = True;
+        your_program([1, 2]) = False).
+
+        Before I start, this is a relatively easy problem. Mathematicaly speaking,
+        any even number times any even number is even. Also, any even times any odd
+        is also even. So, for a pair of numbers to create an odd product, they both
+        have to be odd. So, as long as two odd numbers exist in list numbers, then
+        this is true.
+        """
+        count = 0
+        for x in numbers:
+
+            if x % 2 == 1:  # This identifies odd numbers and counts them.
+                count += 1
+
+            if count > 1:  # If count is ever over 1, then we have pair of numbers
+                return True  # whose product is odd.
+
+        return False  # And if we exit the loop, there is less than two odds.
+        # Therefore, no pair of numbers has an odd product.
+
+
+class problem3:
+    """
+     Given a collection of distinct integers, write/test a Python program that
+     returns all possible permutations, (e.g., input: [1,2,3]; output: [[1,2,3],
+     [1,3,2], [2,1,3], [2,3,1], [3,1,2], [3,2,1]]).
+
+    Okay, so I will list a reference here. I did some research and found out about
+    Heap's algorithm, and essentially I just coded the algorithm in python. I will
+    include my source here, and there will be a explanation on how Heap's
+    algorithm works in the report.
+    https://www.geeksforgeeks.org/heaps-algorithm-for-generating-permutations/
+
+    """
+
+    @staticmethod
+    def permutation(letters, perm_size):
+        if (perm_size == 1):  # When size reaches 1, print letters
+            for x in letters:  # (cannot permute a single element)
+                print(x, end="")
+            print()
+        for x in range(perm_size):  # This establishes the switch when perm_size is even
+            # recursive call for perm_size - 1 (each nth element is fixed in (n-1)! permutations)
+            problem3.permutation(letters, perm_size - 1)
+            # When the perm_size is even, just swap the first and perm_size - 1 elements
+            if (perm_size % 2 == 0):
+                letters[0], letters[perm_size - 1] = letters[perm_size - 1], letters[0]
+            # When perm_size is odd, swap x and perm_size - 1 elements
+            else:
+                letters[x], letters[perm_size - 1] = letters[perm_size - 1], letters[x]
+
+
+class problem4:
+    """
+    Given two integers x and y (x >= 0, y < 2^31), write/test a Python program to
+    calculate the Hamming distance. The Hamming distance between two integers is
+    the number of positions at which the corresponding bits are different.
+
+    To find the hamming distance between two numbers, you first have to convert to
+    binary. Then, compare each
+    """
+
+    @staticmethod
+    def hamming_distance(x, y):
+
+        # This holds the hamming distance between x and y
+        distance = 0
+
+        # This holds the powers of two - used in converting x and y to binary
+        pow_2 = 0
+
+        # so this part converts each number to a binary.
+        x_bin = 0
+        while (x != 0):
+            if (x % 2 == 1):  # If x % 2 = 1...
+                x_bin += 10 ** pow_2  # Then add the corresponding power of 10 to x_bin
+            x = x // 2  # Use floored division to prepare x
+            pow_2 += 1  # Then add to the power of 2
+
+        pow_2 = 0  # reset pow_2 to get ready for y
+        y_bin = 0
+        while (y != 0):  # This is essentially the same as the last loop
+            if (y % 2 == 1):
+                y_bin += 10 ** pow_2
+            y = y // 2
+            pow_2 += 1
+
+        while (x_bin != 0 and y_bin != 0):  # This adds to hamming distance when the
+            if (x_bin % 10 != y_bin % 10):  # one's place differs. Also, it uses
+                distance += 1  # floored division by 10 to ready the
+            x_bin = x_bin // 10  # loop for the next check
+            y_bin = y_bin // 10
+
+        if (x_bin == 0):  # The last loop ends when one number is zero,
+            while (y_bin != 0):  # but this may not be all the bit differences.
+                if (y_bin % 10 == 1):  # Any bit that is one in y_bin would be another
+                    distance += 1  # bit difference to add to hammming distance.
+                y_bin = y_bin // 10
+
+        else:
+            while (x_bin != 0):  # This is the same as the last loop, but for
+                if (x_bin % 10 == 1):  # x_bin when y_bin is 0
+                    distance += 1
+                x_bin = x_bin // 10
+
+        # NOTE: If both x_bin and y_bin are equal to zero by the if/else, while
+        # loops are skipped.
+
+        return distance
+
+
+class main:
+    """
+    # problem 1
+    problem1.read()
+    print(end = print())
+
+    # problem 2
+    print(problem2.odd_product([1, 2, 2, 3]))       # True
+    print(problem2.odd_product([1, 2]))             # False
+    print(problem2.odd_product([2, 4, 6, 8, 10]))   # False
+    print(problem2.odd_product([2, 4, 6, 11, 13]))  # True
+    print(end=print())
+
+
+    # problem 3
+    problem3.permutation(["a", "b", "c", "d"], 4)  # Has 4! = 24 unique outputs
+    print()
+    problem3.permutation(["x", "y", "z"], 3)  # Has 3! = 6 unique outputs
+    print(end=print())
+    """
+
+    # problem 4
+    print(problem4.hamming_distance(4, 8))  # 2
+    print(problem4.hamming_distance(1, 9))  # 1
+    print(problem4.hamming_distance(7, 8))  # 4
+    print(problem4.hamming_distance(12345, 54321))  # 5
+
